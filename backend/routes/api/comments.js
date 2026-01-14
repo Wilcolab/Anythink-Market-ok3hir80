@@ -1,3 +1,49 @@
+/**
+ * Comments API Router
+ * 
+ * @module routes/api/comments
+ * @requires express
+ * @requires mongoose
+ */
+
+/**
+ * Retrieves all comments for a specific post
+ * @route GET /api/comments/:postId
+ * @param {string} req.params.postId - The ID of the post
+ * @returns {object[]} Array of comment objects
+ * @returns {number} 200 - Success
+ * @returns {object} 500 - Server error
+ */
+
+/**
+ * Creates a new comment for a specific post
+ * @route POST /api/comments/:postId
+ * @param {string} req.params.postId - The ID of the post
+ * @param {string} req.body.content - The comment content
+ * @param {string} req.body.author - The comment author
+ * @returns {object} Created comment object with ID
+ * @returns {number} 201 - Comment created successfully
+ * @returns {object} 500 - Server error
+ */
+
+/**
+ * Deletes a specific comment by its ID
+ * @route DELETE /api/comments/:commentId
+ * @param {string} req.params.commentId - The ID of the comment to delete
+ * @returns {object} Success message
+ * @returns {number} 200 - Comment deleted successfully
+ * @returns {number} 404 - Comment not found
+ * @returns {object} 500 - Server error
+ */
+
+/**
+ * Deletes all comments for a specific post
+ * @route DELETE /api/comments/post/:postId
+ * @param {string} req.params.postId - The ID of the post
+ * @returns {object} Success message with count of deleted comments
+ * @returns {number} 200 - Comments deleted successfully
+ * @returns {object} 500 - Server error
+ */
 const router = require("express").Router();
 const mongoose = require("mongoose");
 const Comment = mongoose.model("Comment");
@@ -45,5 +91,15 @@ router.delete("/:commentId", async (req, res) => {
     res.status(200).json({ message: "Comment deleted successfully." });
   } catch (error) {
     res.status(500).json({ error: "Failed to delete comment." });
+  }
+});
+
+// add another endpoint for deleting a comment
+router.delete("/post/:postId", async (req, res) => {
+  try {
+    const deletedComments = await Comment.deleteMany({ postId: req.params.postId });
+    res.status(200).json({ message: `${deletedComments.deletedCount} comments deleted successfully.` });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to delete comments." });
   }
 });
