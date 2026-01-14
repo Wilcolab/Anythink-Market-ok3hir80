@@ -16,4 +16,4 @@ COPY . .
 EXPOSE 8001
 
 # Command to run the app
-CMD ["nodemon", "src/server.js"]
+CMD ["node", "src/server.js"]
