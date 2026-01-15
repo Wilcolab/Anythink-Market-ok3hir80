@@ -4,18 +4,6 @@ services:
       context: ./python-server
       dockerfile: Dockerfile
     ports:
-      - "8000:8000"
+      - 8000:8000
     volumes:
-      - ./python-server:/app
-    environment:
-      - PYTHONUNBUFFERED=1
-
-  node-server:
-    build:
-      context: ./anythink-market-server
-      dockerfile: Dockerfile
-    ports:
-      - "8001:8001"
-    volumes:
-      - ./anythink-market-server:/usr/src/app
-      - /usr/src/app/node_modules
+      - ./python-server/src:/app/src
