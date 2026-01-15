@@ -7,6 +7,7 @@ const PORT = 8001;
 app.use(express.json());
 
 // Initial tasks data
+// Note: Tasks are stored in memory and will be lost when the server restarts
 let tasks = [
     "Write a diary entry from the future",
     "Create a time machine from a cardboard box",
@@ -23,13 +24,28 @@ app.get('/', (req, res) => {
 // POST /tasks - Adds a new task
 app.post('/tasks', (req, res) => {
     const { text } = req.body;
+
+    // Validate that text exists and is a non-empty string
+    if (typeof text !== 'string' || text.trim().length === 0) {
+        return res.status(400).json({ error: 'Task text is required and must be a non-empty string.' });
+    }
+
     tasks.push(text);
-    res.json({ message: 'Task added successfully' });
+    const id = tasks.length - 1;
+    res.status(201).json({ id, text });
 });
 
 // GET /tasks - Returns all tasks
 app.get('/tasks', (req, res) => {
-    res.json({ tasks: tasks });
+    res.json({ tasks });
+});
+
+// Handle JSON parsing errors from express.json()
+app.use((err, req, res, next) => {
+    if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
+        return res.status(400).json({ error: 'Invalid JSON payload' });
+    }
+    next(err);
 });
 
 app.listen(PORT, () => {
